@@ -10,7 +10,7 @@ https://github.com/AleksandraVel/web-larek-frontend.git
 - src/components/base/ — папка с базовым кодом
 
 Важные файлы:
-- src/Gallerys/index.html — HTML-файл главной страницы
+- src/Pages/index.html — HTML-файл главной страницы
 - src/types/index.ts — файл с типами
 - src/index.ts — точка входа приложения
 - src/styles/styles.scss — корневой файл стилей
@@ -50,7 +50,7 @@ yarn build
 - Данные (Model):
  Класс AppState отвечает за хранение и управление данными приложения.
 - Слой отображения (View):
- Классы Gallery, Card, CardPreview, Basket, Order и SuccessModal отвечают за отображение интерфейса для взаимодействия с пользователем.
+ Классы Page, Card, CardPreview, Basket, Order и SuccessModal отвечают за отображение интерфейса для взаимодействия с пользователем.
 - Presenter:
  Классы Modal и EventEmitter связывают Model и View, координируя их взаимодействие. 
 
@@ -143,13 +143,13 @@ Mетоды:
 - handleAddToBasket(): void: Обрабатывает событие добавления товара в корзину и инициирует соответствующее событие.
 - handleClose(): void: Обрабатывает событие закрытия модального окна и скрывает карточку товара.
 
-## class Gallery (View)
+## class Page (View)
 
-Класс Gallery представляет собой главную страницу приложения - галерею товаров. Он не показывается в модальном окне.
+Класс Page представляет собой главную страницу приложения - галерею товаров. Он не показывается в модальном окне.
 Взаимодействует с классом Card для отображения карточек товаров.
 
 Методы:
-- constructor(galleryContainer: HTMLElement): Создает экземпляр класса с заданным контейнером для галереи.
+- constructor(PageContainer: HTMLElement): Создает экземпляр класса с заданным контейнером для галереи.
 - renderCards(cards: Card[]): void: Отображает карточки товаров в галерее.
 - handleCardClick(card: Card): void: Обрабатывает клик по карточке товара и инициирует событие для отображения модального окна с информацией о товаре.
 
