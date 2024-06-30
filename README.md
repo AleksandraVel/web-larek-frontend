@@ -1,4 +1,4 @@
-https://github.com/AleksandraVel/web-larek-frontend.git
+
 
 # Проектная работа "Веб-ларек"
 
