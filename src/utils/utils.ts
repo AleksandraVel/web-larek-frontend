@@ -10,26 +10,20 @@ export function isEmpty(value: any): boolean {
     return value === null || value === undefined;
 }
 
-
 export type SelectorCollection<T> = string | NodeListOf<Element> | T[];
 
-export function ensureAllElements<T extends HTMLElement>(
-	selectorElement: SelectorCollection<T>,
-	context: HTMLElement = document as unknown as HTMLElement
-): T[] {
-	if (isSelector(selectorElement)) {
-		return Array.from(context.querySelectorAll(selectorElement)) as T[];
-	}
-	if (selectorElement instanceof NodeList) {
-		return Array.from(selectorElement) as T[];
-	}
-	if (Array.isArray(selectorElement)) {
-		return selectorElement;
-	}
-	throw new Error(`Unknown selector element`);
+export function ensureAllElements<T extends HTMLElement>(selectorElement: SelectorCollection<T>, context: HTMLElement = document as unknown as HTMLElement): T[] {
+    if (isSelector(selectorElement)) {
+        return Array.from(context.querySelectorAll(selectorElement)) as T[];
+    }
+    if (selectorElement instanceof NodeList) {
+        return Array.from(selectorElement) as T[];
+    }
+    if (Array.isArray(selectorElement)) {
+        return selectorElement;
+    }
+    throw new Error(`Unknown selector element`);
 }
-
-
 
 export type SelectorElement<T> = T | string;
 

@@ -1,50 +1,44 @@
-import './scss/styles.scss';
-
-import { API_URL } from './utils/constants';
-import { Api } from './components/base/api';
-//import { Component } from './components/Component';
-import { EventEmitter } from './components/base/events';
-//import { Model } from './components/Model';
-
-//import { AppState} from './components/AppState';
 //import { Basket } from './components/Basket';
-//import { Card } from './components/Card';
 //import { ContactForm } from './components/ContactForm';
-//import import { Modal } from './components/Modal';
-//{ Order } from './components/Order';
-//import { Page } from './components/Page';
+//import { Order } from './components/Order';
 //import { SuccessModal } from './components/SuccessModal';
 
-import { Product, ProductList} from './types';
+import './scss/styles.scss';
+
+// Импортируем необходимые компоненты
+import { Api } from './components/base/api';
+import { EventEmitter } from './components/base/events';
+import { AppState } from './components/AppState';
+import { Card } from './components/Card';
+import { Page } from './components/Page';
 import { cloneTemplate, ensureElement } from './utils/utils';
+import { Product, ProductList } from './types';
+import { API_URL, CDN_URL } from './utils/constants';
 
-// шаблоны
-const successTemplate = ensureElement<HTMLTemplateElement>('#success');
-const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
-const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
-const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
-const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+// Шаблоны
+const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog'); //для карточки из HTML
 
-const events = new EventEmitter();
-const api = new Api(API_URL);
+// Создаем объекты
+const events = new EventEmitter(); //EventEmitter для работы с событиями
+const api = new Api(API_URL); //Api для взаимодействия с сервером
+const appState = new AppState(events); //AppState для управления данными приложения 
 
-// Модели данных приложения
-//const appState = new AppState(events);
+// Создание страницы
+const page = new Page(cardCatalogTemplate, events);
 
-// Глобальные контейнеры
-//const page = new Page(document.body, events);
-//const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
-
-// Переиспользуемые части интерфейса
-//const basket = new Basket(cloneTemplate(basketTemplate), events);
-//const order = new Order(cloneTemplate(orderTemplate), events);
-//const contacts = new ContactForm(cloneTemplate(contactsTemplate), events);
-//const successModal = new SuccessModal(cloneTemplate(successTemplate), events);
+// Добавление страницы на страницу
+document.body.appendChild(page.render());
 
 // Получаем товары с сервера
 api.get('/product')
-  .then((res: ProductList) => {
-    appState.setProducts(res.items as Product[]);
-  }).catch((err) => {
-    console.error(err);
-  });
+    .then((res: ProductList) => {
+        appState.setProducts(res.items as Product[]);
+    })
+    .catch((err) => {
+        console.error(err);
+    });
+
+// Подписываемся на событие "get-products"
+events.on('get-products', (products: Product[]) => { 
+    const cards = products.map((product) => new Card(cloneTemplate(cardCatalogTemplate), product, events));
+});

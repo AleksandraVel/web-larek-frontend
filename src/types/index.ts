@@ -10,16 +10,11 @@ export interface Product {
   price: number;
 }
 
+// Типы списка для данных получаемых с севера.
 export interface ProductList {
-  total: number;
+  total: number; 
   items: Product[];
-}
-
-
-export interface CardData {
-  product: Product;
-  onAddToBasket: (product: Product) => void;
-}
+};
 
 //для формы контактов
 export interface IСontact {

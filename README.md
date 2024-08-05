@@ -1,4 +1,4 @@
-
+https://github.com/AleksandraVel/web-larek-frontend.git
 
 # Проектная работа "Веб-ларек"
 
@@ -90,6 +90,7 @@ yarn build
 - post(uri: string, data: object, method: ApiPostMethods = 'POST'): Promise<object>: Выполняет POST, PUT или DELETE-запрос к API по указанному URI с переданными данными и возвращает Promise с данными в формате объекта.
 
 ## class EventEmitter (Presenter)
+
 Класс EventEmitter выступает в роли Представителя (Presenter).
 Реализует механизм событий, позволяющий классам взаимодействовать друг с другом.
 Предоставляет методы для подписки, отписки и вызова обработчиков событий.
@@ -116,10 +117,13 @@ Mетоды:
 Методы:
 - addToBasket(product: Product): void - добавляет товар в корзину
 - removeFromBasket(product: Product): void - удаляет товар из корзины
-- placeOrder(orderData: OrderData): void - сохраняет данные о новом заказе
-- getProducts(): Array<Product> - возвращает массив данных о товарах
-- getBasket(): Array<BasketItem> - возвращает массив товаров в корзине
-- getOrders(): Array<OrderData> - возвращает массив данных о заказах
+- setProducts(products: Product[]): void - заменяет массив товаров.
+- emitChanges(event: string, payload?: object): void - сообщает всем что модель поменялась.
+
+События:
+'add-to-basket' - генерируется при добавлении товара в корзину.
+'remove-from-basket' - генерируется при удалении товара из корзины.
+'get-products' - генерируется при установке массива товаров.
 
 ## class Component
 
@@ -139,6 +143,15 @@ protected constructor(protected readonly container: HTMLElement)
 - setVisible(element: HTMLElement): Показывает указанный элемент.
 - setImage(element: HTMLImageElement, src: string, alt?: string): Устанавливает изображение с альтернативным текстом для указанного элемента.
 - render(data?: Partial<T>): HTMLElement: Возвращает корневой DOM-элемент компонента с возможностью обновления данных.
+
+## class Model
+
+Класс Model является базовой моделью и предазначен для отличия ее от простых объектов данных.  
+
+Методы: 
+- constructor: Создает экземпляра с указанными данными и объектом для управления событиями. 
+- emitChanges(event: string, payload?: object): Генерирует указанное событие и передает дополнительные данные. 
+
 
 ## class Modal (View)
 
@@ -211,7 +224,7 @@ protected constructor(protected readonly container: HTMLElement)
 - set valid(value: boolean): Устанавливает состояние валидности формы.
 - set errors(value: string): Устанавливает текст ошибки для формы.
 
-## class Order (View)
+## class Order (Form)
 
 Класс Order за отображение форм оформления заказа в модальном окне.
 Он отображает формы для ввода информации о доставке и оплате.
@@ -223,16 +236,18 @@ protected constructor(protected readonly container: HTMLElement)
 - renderDeliveryForm(): void: Отображает форму ввода адреса доставки.
 - handleSubmit(data: OrderData): void: Обрабатывает отправку формы заказа и инициирует событие для завершения оформления заказа.
 
-## class ContactForm (View)
+## class ContactForm (Form)
 
 Класс ContactForm отображает форму для ввода контактных данных пользователя (email и телефон).
 Взаимодействует с классом AppState для сохранения данных пользователя.
+(содержит валидацию форм)
 
 Методы:
 
 - constructor(contactContainer: HTMLElement): Создает экземпляр класса с заданным контейнером для формы контактов.
 - render(): void: Отображает форму для ввода контактных данных пользователя.
 - handleSubmit(data: ContactData): void: Обрабатывает отправку формы контактов и инициирует событие для сохранения данных пользователя.
+
 
 ## class SuccessModal (View)
 
