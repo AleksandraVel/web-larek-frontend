@@ -11,13 +11,21 @@ import { Page } from './components/Page';
 import { ensureElement, cloneTemplate } from './utils/utils';
 import { Product, ProductList } from './types';
 import { API_URL } from './utils/constants';
+import { CardPreview } from './components/CardPreview';
+import { Modal } from './components/Modal';
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 
 // Создаем объекты EventEmitter, Api и AppState
 const events = new EventEmitter();
 const api = new Api(API_URL);
 const appState = new AppState(events);
+
+// Создаем модальное окно
+const modalElement = ensureElement<HTMLElement>('#modal-container');
+const modal = new Modal(modalElement, events);
+
 
 // Создаем страницу и получаем ссылку на элемент галереи
 const galleryElement = ensureElement<HTMLElement>('#gallery');
@@ -36,4 +44,22 @@ api.get<ProductList>('/product')
   })
   .catch((err) => {
     console.error(err);
+  });
+
+
+  events.on('card:click', (product: Product) => {
+    const cardPreview = new CardPreview(
+      ensureElement<HTMLTemplateElement>('#card-preview'),
+      product,
+      events,
+      modal
+    );
+    modal.render({
+      content: cardPreview.render(),
+    });
+  });
+  
+  events.on('basket:add', (product: Product) => {
+    // Добавляем товар в корзину
+    appState.addToBasket(product);
   });

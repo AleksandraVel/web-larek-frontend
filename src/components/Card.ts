@@ -59,7 +59,7 @@ export class Card extends Component<Product> {
   }
 
   // Метод для обработки клика по карточке товара
-  handleClick(): void {
+  protected handleClick(): void {
     this.events.emit('card:click', this.product);
   }
 
