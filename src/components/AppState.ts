@@ -1,15 +1,44 @@
 import { EventEmitter } from './base/events';
-import { Product, BasketItem, IOrder } from '../types';
+import { Product, BasketItem, IOrder, IContact } from '../types';
 import { Model } from './base/Model';
 
-interface IAppState {
+export interface IAppState {
   products: Product[];
   basket: BasketItem[];
   orders: IOrder[];
 }
 
 export class AppState extends Model<IAppState> {
-  protected products: Product[]; 
+  products: Product[] = [];
+  private contactData: IContact = { email: '', phone: '' };
+
+  setProducts(products: Product[]) {
+    this.products = products;
+    this.emitChanges('get-products', { products });
+  }
+
+  getProducts() {
+    return this.products;
+  }
+
+  addOrder(order: IOrder) {
+    this.orders.push(order);
+    this.emitChanges('order:added', { order });
+  }
+
+  getOrders() {
+    return this.orders;
+  }
+
+  saveContactData(contactData: IContact) {
+    this.contactData = contactData;
+    this.emitChanges('contact:saved', { contactData });
+  }
+
+  getContactData() {
+    return this.contactData;
+  }
+
   protected basket: BasketItem[];
   protected orders: IOrder[];
 
@@ -28,12 +57,6 @@ export class AppState extends Model<IAppState> {
     this.events.on(event, callback);
   }
 
-  // Установка списка продуктов
-  setProducts(products: Product[]) {
-    this.products = products;
-    this.emitChanges('get-products', this.products); 
-  }
-
   addToBasket(product: Product) {
     console.log('Product added to basket:', product);
   }
@@ -42,8 +65,6 @@ export class AppState extends Model<IAppState> {
     this.emitChanges('remove-from-basket', product);
   }
   
-  // ... другие методы для работы с корзиной, заказами
-
   private emit<T extends object>(event: string, data?: T): void {
     this.events.emit(event, data); 
   }

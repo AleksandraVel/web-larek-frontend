@@ -1,14 +1,13 @@
 import { Component } from './base/Component';
 import { EventEmitter } from './base/events';
+import { ensureElement, cloneTemplate } from '../utils/utils';
 import { Product } from '../types';
 
 // Класс Card, представляющий карточку товара
 export class Card extends Component<Product> {
-  // Приватное свойство, хранящее данные о товаре
-  private product: Product;
+  protected product: Product;
 
   // Защищенные свойства для доступа к элементам шаблона
-  protected _index?: HTMLElement;
   protected _title: HTMLElement;
   protected _image: HTMLImageElement;
   protected _button: HTMLButtonElement;
@@ -21,23 +20,17 @@ export class Card extends Component<Product> {
 
   // Конструктор класса Card
   constructor(template: HTMLTemplateElement, product: Product, events: EventEmitter) {
-    super(template);
+    super(template.content.cloneNode(true) as HTMLElement);
     this.product = product;
     this.events = events;
 
     // Получаем элементы шаблона из клонированного контента
-    this._index = template.content.querySelector('.card__index');
-    this._title = template.content.querySelector('.card__title')!;
-    this._image = template.content.querySelector('.card__image')!;
-    this._button = template.content.querySelector('.card__button')!;
-    this._category = template.content.querySelector('.card__category')!;
-    this._price = template.content.querySelector('.card__price')!;
-    this._description = template.content.querySelector('.card__text');
-
-    // Проверяем, что элементы были успешно найдены
-    if (!this._title || !this._image || !this._button || !this._category || !this._price) {
-      throw new Error('Required DOM elements are not found in card template');
-    }
+    this._title = ensureElement<HTMLElement>('.card__title', this.container);
+    this._image = ensureElement<HTMLImageElement>('.card__image', this.container);
+    this._button = ensureElement<HTMLButtonElement>('.gallery__item', this.container);
+    this._category = ensureElement<HTMLSpanElement>('.card__category', this.container);
+    this._price = ensureElement<HTMLSpanElement>('.card__price', this.container);
+    this._description = this.container.querySelector('.card__text');
 
     // Вызываем метод инициализации элемента
     this.initElement();
@@ -55,11 +48,24 @@ export class Card extends Component<Product> {
 
     // Добавляем обработчик клика на кнопку
     this._button.addEventListener('click', () => {
-      this.events.emit('add-to-basket', this.product);
+      this.handleClick();
     });
-    return this;
   }
 
+  // Метод для отображения карточки товара
+  render(): HTMLElement {
+    return this.container;
+  }
+
+  // Метод для обработки клика по карточке товара
+  handleClick(): void {
+    this.events.emit('card:click', this.product);
+  }
+
+  getProduct(): Product {
+    return this.product;
+  }
+  
   // Метод getHtml для получения HTML-контента карточки
   getHtml(): string {
     return this.render().outerHTML;

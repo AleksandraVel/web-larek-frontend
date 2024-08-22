@@ -1,50 +1,50 @@
 // ТИПЫ ДАННЫХ
 
-//для продукта
+// для продукта
 export interface Product {
   id: string;
   description: string;
   image: string;
   title: string;
   category: string;
-  price: number;
+  price: number | null;
 }
 
-// Типы списка для данных получаемых с севера.
+// Типы списка для данных, получаемых с сервера.
 export interface ProductList {
-  total: number; 
+  total: number;
   items: Product[];
-};
+}
 
-//для формы контактов
-export interface IСontact {
+// для формы контактов
+export interface IContact {
   email: string;
   phone: string;
 }
 
-//для заказа
+// для заказа
 export interface IOrder {
   paymentMethod: PaymentMethod;
   address: Address;
 }
 
-//для формы оплаты
+// для формы оплаты
 export interface PaymentMethod {
-  type: 'online' | 'cash';
+  type: "online" | "cash";
 }
 
 export interface Address {
-  [key: string]: string | number;
   street: string;
   city: string;
   state: string;
   zipCode: string;
   country: string;
+  [key: string]: string | number;
 }
 
 // Тип для элемента корзины
 export type BasketItem = {
-  quantity: number;
-  id: string;
-  product: Product; 
+  quantity: number,
+  id: string,
+  product: Product,
 };
