@@ -10,7 +10,7 @@ import { Card } from './components/Card';
 import { Page } from './components/Page';
 import { ensureElement, cloneTemplate } from './utils/utils';
 import { Product, ProductList } from './types';
-import { API_URL, CDN_URL } from './utils/constants';
+import { API_URL } from './utils/constants';
 
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 

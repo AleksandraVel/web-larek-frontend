@@ -2,6 +2,7 @@ import { Component } from './base/Component';
 import { EventEmitter } from './base/events';
 import { ensureElement, cloneTemplate } from '../utils/utils';
 import { Product } from '../types';
+import { CDN_URL } from '../utils/constants';
 
 // Класс Card, представляющий карточку товара
 export class Card extends Component<Product> {
@@ -39,7 +40,7 @@ export class Card extends Component<Product> {
   // Защищенный метод инициализации элемента
   protected initElement() {
     this._title.textContent = this.product.title;
-    this._image.setAttribute('src', this.product.image);
+    this._image.setAttribute('src', `${CDN_URL}/${this.product.image}`);
     this._price.textContent = `${this.product.price} синапсов`;
     this._category.textContent = this.product.category;
     if (this._description) {
