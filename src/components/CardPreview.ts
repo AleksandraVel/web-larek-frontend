@@ -41,8 +41,8 @@ export class CardPreview extends Component<Product> {
 
     // Добавляем обработчик клика на кнопку "Добавить в корзину"
     this._button.addEventListener('click', () => {
-      this.handleAddToBasket();
-    });
+        this.events.emit('card:addToBasket',this.product);
+      });
 
     // Добавляем обработчик клика на карточку для открытия модального окна
     this.container.addEventListener('click', () => {
@@ -59,6 +59,7 @@ export class CardPreview extends Component<Product> {
     if (this._description) {
       this._description.textContent = this.product.description;
     }
+    
   }
 
   handleAddToBasket() {

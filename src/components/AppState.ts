@@ -11,6 +11,19 @@ export interface IAppState {
 export class AppState extends Model<IAppState> {
   products: Product[] = [];
   private contactData: IContact = { email: '', phone: '' };
+  basket: BasketItem[] = [];
+  orders: IOrder[] = [];
+
+  constructor(events: EventEmitter) {
+    super({ products: [], basket: [], orders: [] }, events);
+
+    // Подписка на события
+    this.on('set-products', this.setProducts);
+    this.on('add-to-basket', this.addToBasket);
+    this.on('basket:remove', this.removeFromBasket);
+    this.on('basket:change', this.updateBasket);
+    // ... другие события
+  }
 
   setProducts(products: Product[]) {
     this.products = products;
@@ -39,33 +52,52 @@ export class AppState extends Model<IAppState> {
     return this.contactData;
   }
 
-  protected basket: BasketItem[];
-  protected orders: IOrder[];
-
-  constructor(events: EventEmitter) {
-    super({ products: [], basket: [], orders: [] }, events);
-
-    // Подписка на события
-    this.on('set-products', this.setProducts);
-    this.on('add-to-basket', this.addToBasket);
-    //this.on('remove-from-basket', this.removeFromBasket);
-    // ... другие события
+  addToBasket(product: Product) {
+    // Проверяем, есть ли уже продукт в корзине
+    const existingItem = this.basket.find(item => item.id === product.id);
+    if (existingItem) {
+      // Если продукт уже есть, увеличиваем его количество
+      existingItem.quantity += 1;
+    } else {
+      // Если продукта нет в корзине, добавляем новый элемент
+      const basketItem: BasketItem = {
+        quantity: 1,
+        id: product.id,
+        product,
+      };
+      this.basket.push(basketItem);
+    }
+    // Отправляем событие об изменении корзины
+    this.emitChanges('basket:add', product);
+  }
+  
+  removeFromBasket(product: Product) {
+    this.basket = this.basket.filter((item) => item.product.id !== product.id);
+    this.emitChanges('basket:remove', product);
   }
 
-  // Подписка на события
+  getBasketItems(): BasketItem[] {
+    return this.basket;
+  }
+
+  updateBasket(basketItems: BasketItem[]) {
+    this.basket = basketItems;
+    this.emitChanges('basket:updated', { basket: this.basket });
+  }
+  
   private on<T extends object>(event: string, callback: (data: T) => void): void {
     this.events.on(event, callback);
   }
 
-  addToBasket(product: Product) {
-    console.log('Product added to basket:', product);
+  private emit<T extends object>(event: string, data?: T): void {
+    this.events.emit(event, data);
   }
 
-  removeFromBasket(product: Product) {
-    this.emitChanges('remove-from-basket', product);
+  calculateTotalPrice(basketItems: BasketItem[]): number {
+    return basketItems.reduce((total, item) => total + (item.product.price || 0), 0);
   }
-  
-  private emit<T extends object>(event: string, data?: T): void {
-    this.events.emit(event, data); 
+
+  validateTotalPrice(basketItems: BasketItem[]): boolean {
+    return basketItems.some(item => item.product.price !== null);
   }
 }
